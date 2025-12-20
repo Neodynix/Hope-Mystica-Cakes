@@ -1,0 +1,176 @@
+/* about.css - About Page Specific Styles */
+
+.about-hero {
+    position: relative;
+    height: 70vh;
+    min-height: 500px;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('https://images.unsplash.com/photo-1602351447933-9b3e2e379d75?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.about-hero .hero-overlay {
+    text-align: center;
+    color: white;
+    padding: 0 2rem;
+    z-index: 1;
+}
+
+.about-hero h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4.5rem;
+    color: #00C4B4;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+}
+
+.about-hero p {
+    font-size: 1.6rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
+.about-content {
+    padding: 8rem 5% 6rem;
+    background: #f9f9f9;
+    text-align: center;
+}
+
+.about-content .container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.about-content h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.5rem;
+    color: #00C4B4;
+    margin-bottom: 2rem;
+}
+
+.about-content .intro {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1.8rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.flavours {
+    margin-top: 4rem;
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.flavours h3 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.8rem;
+    color: #ff69b4;
+    margin-bottom: 1.5rem;
+}
+
+.flavours ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+}
+
+.flavours li {
+    font-size: 1.1rem;
+    padding: 0.8rem;
+    background: #e0f7f5;
+    border-radius: 10px;
+    color: #333;
+    transition: transform 0.3s;
+}
+
+.flavours li:hover {
+    transform: translateY(-5px);
+    background: #00C4B4;
+    color: white;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .about-hero {
+        height: 70vh;
+        min-height: 450px;
+    }
+
+    .about-hero h1 {
+        font-size: 3rem;
+    }
+
+    .about-hero p {
+        font-size: 1.3rem;
+    }
+
+    .about-content {
+        padding: 6rem 5% 4rem;
+    }
+
+    .about-content h2 {
+        font-size: 2.8rem;
+    }
+
+    .flavours ul {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-hero p {
+        font-size: 1.1rem;
+    }
+}
+
+.founder-section {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.founder-photo {
+    width: 350px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    object-fit: cover;
+}
+
+.founder-text {
+    flex: 1;
+    min-width: 300px;
+}
+
+@media (max-width: 768px) {
+    .founder-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .founder-photo {
+        width: 280px;
+    }
+}
