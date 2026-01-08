@@ -1,39 +1,62 @@
-// scripts/admin.js
-const SUPABASE_URL = 'https://maotqbvahqunerrcjmnj.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hb3RxYnZhaHF1bmVycmNqbW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTUyMTMsImV4cCI6MjA4MzQzMTIxM30.ifuW5vgU8PgPRpvRlrknflrDwM_2sRsvxY8Oh5eac4M';
+// === CONFIGURE YOUR SUPABASE DETAILS HERE ===
+const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'your-public-anon-key';
 
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Simple client-side auth (for demo/admin use only - replace with proper auth in production)
-const ADMIN_CREDENTIALS = {
-    email: 'isaacsemwogerere37@gmail.com',    // Change this
-    password: 'Izzonix@#18'        // Change this
-};
+// Check if already logged in on page load
+async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        showDashboard(session.user.email);
+        loadCakes();
+    }
+}
 
+checkAuth();
+
+// Login
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const message = document.getElementById('auth-message');
 
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('admin-dashboard').classList.remove('hidden');
-        loadCakes();
+    message.textContent = 'Logging in...';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+
+    if (error) {
+        message.textContent = error.message;
     } else {
-        message.textContent = 'Invalid email or password';
+        showDashboard(data.user.email);
+        loadCakes();
     }
 });
 
-document.getElementById('logout-btn').addEventListener('click', () => {
+// Logout
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
     document.getElementById('admin-dashboard').classList.add('hidden');
     document.getElementById('login-screen').classList.remove('hidden');
     document.getElementById('login-form').reset();
     document.getElementById('auth-message').textContent = '';
 });
 
+// Show dashboard
+function showDashboard(email) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-dashboard').classList.remove('hidden');
+    document.getElementById('user-email').textContent = email;
+}
+
+// Add cake
 document.getElementById('add-cake-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const message = document.getElementById('message');
     const progressContainer = document.getElementById('upload-progress');
     const progressBar = document.getElementById('progress-bar');
@@ -42,7 +65,7 @@ document.getElementById('add-cake-form').addEventListener('submit', async (e) =>
     const title = document.getElementById('title').value;
     const category = document.getElementById('category').value;
     const weight = document.getElementById('weight').value || null;
-    const price = document.getElementById('price').value || null;
+    const price = document.getElementById('price').value ? Number(document.getElementById('price').value) : null;
     const description = document.getElementById('description').value || null;
     const file = document.getElementById('image').files[0];
 
@@ -53,15 +76,14 @@ document.getElementById('add-cake-form').addEventListener('submit', async (e) =>
 
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = fileName;
 
-    message.textContent = 'Uploading...';
+    message.textContent = 'Uploading image...';
     progressContainer.classList.remove('hidden');
 
-    // Upload image
-    const { error: uploadError } = await supabase.storage
+    // Upload image (requires user to be authenticated)
+    const { data: uploadData, error: uploadError } = await supabase.storage
         .from('cakes')
-        .upload(filePath, file, {
+        .upload(fileName, file, {
             cacheControl: '3600',
             upsert: false
         });
@@ -72,7 +94,7 @@ document.getElementById('add-cake-form').addEventListener('submit', async (e) =>
         return;
     }
 
-    // Insert cake record
+    // Insert database record
     const { error: dbError } = await supabase
         .from('cakes')
         .insert({
@@ -80,8 +102,8 @@ document.getElementById('add-cake-form').addEventListener('submit', async (e) =>
             category,
             description,
             weight,
-            price: price ? Number(price) : null,
-            image_path: filePath
+            price,
+            image_path: fileName
         });
 
     if (dbError) {
@@ -95,6 +117,7 @@ document.getElementById('add-cake-form').addEventListener('submit', async (e) =>
     progressContainer.classList.add('hidden');
 });
 
+// Load and display cakes
 async function loadCakes() {
     const { data: cakes, error } = await supabase
         .from('cakes')
@@ -119,23 +142,28 @@ async function loadCakes() {
                     ${cake.weight ? `<p><strong>Weight:</strong> ${cake.weight}</p>` : ''}
                     ${cake.price ? `<p><strong>Price:</strong> UGX ${cake.price.toLocaleString()}/-</p>` : ''}
                     ${cake.description ? `<p>${cake.description}</p>` : ''}
-                    <button class="delete-btn" data-id="${cake.id}">Delete Cake</button>
+                    <button class="delete-btn" data-id="${cake.id}" data-path="${cake.image_path}">Delete</button>
                 </div>
             </div>`;
     });
 
     document.getElementById('cakes-list').innerHTML = html || '<p>No cakes yet.</p>';
 
-    // Add delete handlers
+    // Delete handlers
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
+            if (!confirm('Delete this cake permanently?')) return;
+
             const id = btn.dataset.id;
-            if (confirm('Delete this cake?')) {
-                const { data: cake } = await supabase.from('cakes').select('image_path').eq('id', id).single();
-                await supabase.storage.from('cakes').remove([cake.image_path]);
-                await supabase.from('cakes').delete().eq('id', id);
-                loadCakes();
-            }
+            const path = btn.dataset.path;
+
+            // Delete image
+            await supabase.storage.from('cakes').remove([path]);
+
+            // Delete record
+            await supabase.from('cakes').delete().eq('id', id);
+
+            loadCakes();
         });
     });
-  }
+                                                       }
