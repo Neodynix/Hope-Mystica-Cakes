@@ -1,4 +1,4 @@
-// scripts/admin.js - Complete Working Supabase Authentication
+// scripts/admin.js - Fixed Supabase Authentication
 
 // ============================================
 // STEP 1: Configure your Supabase credentials
@@ -77,13 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw error;
       }
 
-      // Login successful
-      loginError.style.display = 'none';
-      loginSection.style.display = 'none';
-      adminContainer.style.display = 'block';
-      await initAdmin();
-      
-      // Clear form
+      // Login successful - the auth state change listener will handle UI updates
       loginForm.reset();
 
     } catch (error) {
@@ -105,8 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw error;
       }
 
-      // Logout successful - reload page
-      window.location.reload();
+      // Logout will be handled by auth state change listener
       
     } catch (error) {
       console.error('Logout error:', error);
@@ -320,18 +313,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ============================================
-  // Listen for auth state changes
+  // Listen for auth state changes (MUST BE LAST)
   // ============================================
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log('Auth state changed:', event);
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('Auth state changed:', event, session ? 'Session exists' : 'No session');
     
     if (event === 'SIGNED_OUT') {
       loginSection.style.display = 'flex';
       adminContainer.style.display = 'none';
-    } else if (event === 'SIGNED_IN') {
+    } else if (event === 'SIGNED_IN' && session) {
+      loginError.style.display = 'none';
       loginSection.style.display = 'none';
       adminContainer.style.display = 'block';
-      initAdmin();
+      await initAdmin();
     }
   });
 });
