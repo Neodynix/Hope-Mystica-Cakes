@@ -6,8 +6,8 @@ const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Simple client-side auth (for demo/admin use only - replace with proper auth in production)
 const ADMIN_CREDENTIALS = {
-    email: 'admin@hopemysticacakes.com',    // Change this
-    password: 'your-secure-password'        // Change this
+    email: 'isaacsemwogerere37@gmail.com',    // Change this
+    password: 'Izzonix@#18'        // Change this
 };
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
