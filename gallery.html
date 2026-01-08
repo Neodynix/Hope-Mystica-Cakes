@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hope Mystica Cakes - Gallery</title>
 
+    <!-- SEO -->
+    <meta name="description" content="Explore our stunning gallery of handcrafted cakes for weddings, kwanjula, birthdays, and special occasions in Kampala, Uganda.">
+    <meta name="keywords" content="cake gallery Kampala, wedding cakes Uganda, kwanjula cakes, birthday cakes Kampala, Hope Mystica Cakes">
+
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/gallery.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +17,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="scripts/main.js" defer></script>
+    <script src="scripts/gallery.js" defer></script>
 </head>
 <body>
     <header>
@@ -41,90 +49,19 @@
     </section>
 
     <section class="gallery-content fade-in" aria-label="Cake Gallery">
-        <div class="container">
-
-            <h2>Wedding & Kwanjula Cakes</h2>
-            <div class="grid">
-                <div class="gallery-item">
-                    <img src="images/elegant-african-print.jpg" alt="Elegant African Print Kwanjula Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Elegant African Print Kwanjula Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/abstract-top.jpg" alt="African Print Kwanjula with Abstract Topper" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">African Print Kwanjula with Abstract Topper</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/gold-white.jpg" alt="Gold & White Elegant Wedding Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Gold & White Elegant Wedding Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/all-white.jpg" alt="All White Flowers Fondant Wedding Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">All White Flowers Fondant Wedding Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/bridal-cake.jpg" alt="Stunning Bridal Fondant Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Stunning Bridal Fondant Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/celebratory-cake.jpg" alt="Golden Anniversary Style Wedding Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Golden Anniversary Style Wedding Cake</div>
-                </div>
+        <div class="container" id="gallery-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading our beautiful cakes...
             </div>
-
-            <h2>Birthday & Kids Cakes</h2>
-            <div class="grid">
-                <div class="gallery-item">
-                    <img src="images/colorful-birthday-cake.jpg" alt="Fun Colorful Round Birthday Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Fun Colorful Round Birthday Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/butterfly-cake.jpg" alt="Homemade Butterfly Birthday Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Homemade Butterfly Birthday Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/Orugyegye.jpg" alt="Orugyegye Theme Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Orugyegye Theme Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/elegant-kids.jpg" alt="Elegant Kids & Adults Cake Design" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Elegant Kids & Adults Cake Design</div>
-                </div>
-            </div>
-
-            <h2>Traditional & Special Flavours</h2>
-            <div class="grid">
-                <div class="gallery-item">
-                    <img src="images/traditional-pot.jpg" alt="Traditional Pots Kuhingira Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Traditional Pots Kuhingira Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/traditional-milk.jpg" alt="Traditional Milk Pots Theme" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Traditional Milk Pots Theme</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/introduction-cake.jpg" alt="Introduction Ceremony Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Introduction Ceremony Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/luxury-red.jpg" alt="Luxury Red Velvet Cake" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Luxury Red Velvet Cake</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/classic-red.jpg" alt="Classic Red Velvet Creation" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Classic Red Velvet Creation</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="images/elegant-red.jpg" alt="Elegant Red Velvet Masterpiece" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
-                    <div class="overlay">Elegant Red Velvet Masterpiece</div>
-                </div>
-            </div>
-
         </div>
     </section>
 
     <footer>
         <p>Hope Mystica Cakes | Bugolobi Spring Valley Apartments, Kampala, Uganda</p>
-        <p>Call us: <a href="tel:+256701854289">0701 854 289</a> | <a href="tel:+256775664822">0775 664 822</a></p>
+        <p>Call us: 
+            <a href="tel:+256701854289">0701 854 289</a> | 
+            <a href="tel:+256775664822">0775 664 822</a>
+        </p>
         <div class="social-icons">
             <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
             <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -133,8 +70,12 @@
         <p>&copy; <span id="year"></span> Hope Mystica Cakes. All rights reserved.</p>
     </footer>
 
-    <a href="https://wa.me/256701854289?text=Hi%20Hope%20Mystica%20Cakes%2C%20I'd%20like%20to%20place%20an%20order!" class="whatsapp-btn" target="_blank" rel="noopener noreferrer" aria-label="Order on WhatsApp">
+    <a href="https://wa.me/256701854289?text=Hi%20Hope%20Mystica%20Cakes%2C%20I'd%20like%20to%20place%20an%20order!" 
+       class="whatsapp-btn" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       aria-label="Order on WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 </body>
-</html>
+        </html>
