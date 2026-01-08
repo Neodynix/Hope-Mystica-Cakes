@@ -3,101 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Hope Mystica Cakes</title>
 
+    <title>Hope Mystica Cakes - Best Taste. Quality Service.</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Hope Mystica Cakes offers handcrafted custom cakes in Kampala, Uganda. We specialize in birthday cakes, wedding cakes, kids cakes, and luxury cake designs with the best taste and quality service.">
+    <meta name="keywords" content="cakes in Kampala, custom cakes Uganda, birthday cakes Kampala, wedding cakes Uganda, kids cakes Kampala, Hope Mystica Cakes">
+    <meta name="author" content="Hope Mystica Cakes">
+
+    <!-- Open Graph (WhatsApp / Facebook) -->
+    <meta property="og:title" content="Hope Mystica Cakes - Best Taste. Quality Service.">
+    <meta property="og:description" content="Handcrafted custom cakes for birthdays, weddings, and special occasions in Kampala, Uganda.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hopemysticacakes.com">
+    <meta property="og:image" content="https://hopemysticacakes.com/images/seo-preview.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hope Mystica Cakes">
+    <meta name="twitter:description" content="Custom cakes made with love in Kampala, Uganda.">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/home.css">
 
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="scripts/admin.js" defer></script>
+    <!-- JS -->
+    <script src="scripts/main.js" defer></script>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="login-screen" class="auth-container">
-        <div class="auth-card">
-            <h1>Admin Login</h1>
-            <p>Hope Mystica Cakes Management</p>
-            <form id="login-form">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-            <p id="auth-message" class="error-message"></p>
+
+<header>
+    <nav>
+        <div class="logo">Hope Mystica <span>Cakes</span></div>
+
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero fade-in">
+    <video autoplay muted loop playsinline poster="https://via.placeholder.com/1920x1080?text=Cake+Decorating">
+        <source src="videos/background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="hero-overlay">
+        <h1>Best Taste. Quality Service.</h1>
+        <p>Handcrafted custom cakes that wow every celebration</p>
+        <a href="gallery.html" class="btn">Discover Our Masterpieces</a>
+    </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section class="pricing fade-in">
+    <h2>Our Price List</h2>
+    <p class="section-subtitle">All prices in Ugandan Shillings (UGX). Prices may vary depending on design complexity.</p>
+
+    <div class="price-grid">
+        <!-- Left Column -->
+        <div class="price-column">
+            <h3>Butter Cream Cakes</h3>
+            <ul>
+                <li>2 kgs <span>120,000/-</span></li>
+                <li>2.5 kgs <span>180,000/-</span></li>
+                <li>3 kgs <span>280,000/-</span></li>
+                <li>4 kgs <span>350,000/-</span></li>
+            </ul>
+
+            <h3>Fondant Section</h3>
+            <ul>
+                <li>2 kgs <span>140,000/-</span></li>
+                <li>2.5 kgs <span>200,000/-</span></li>
+                <li>3 kgs <span>300,000/-</span></li>
+                <li>4 kgs <span>400,000/-</span></li>
+            </ul>
+
+            <h3>2 Tier Cakes</h3>
+            <p>These range from<br><strong>400,000/- to 1,000,000/-</strong></p>
+        </div>
+
+        <!-- Right Column -->
+        <div class="price-column">
+            <h3>Special Flavors</h3>
+            <ul class="special-flavors">
+                <li>Black Forest 2 kgs <span>160,000/-</span></li>
+                <li>Black Forest 2.5 kgs <span>250,000/-</span></li>
+                <li>Chocolate fudge 2 kgs <span>160,000/-</span></li>
+                <li>Chocolate fudge 2.5 kgs <span>250,000/-</span></li>
+                <li>Red Velvet 2 kgs <span>160,000/-</span></li>
+                <li>Red Velvet 2.5 kgs <span>250,000/-</span></li>
+                <li>Rich fruit cake 2 kgs <span>160,000/-</span></li>
+                <li>Rich fruit cake 2.5 kgs <span>250,000/-</span></li>
+            </ul>
+
+            <h3>Available Flavors</h3>
+            <div class="flavors-list">
+                <span>Chocolate</span>
+                <span>Vanilla</span>
+                <span>Blueberry</span>
+                <span>Mint</span>
+                <span>Red Velvet</span>
+                <span>Black Forest</span>
+                <span>Tutti Fruity</span>
+                <span>Coconut</span>
+                <span>Fruit</span>
+                <span>Mixed Berries</span>
+                <span>Strawberry</span>
+                <span>Bubble Gum</span>
+                <span>Tangerine</span>
+                <span>Caramel</span>
+                <span>Carrot</span>
+                <span>Pineapple</span>
+                <span>Lemon</span>
+                <span>Banana</span>
+            </div>
         </div>
     </div>
 
-    <!-- Admin Dashboard (hidden until logged in) -->
-    <div id="admin-dashboard" class="hidden">
-        <header>
-            <nav>
-                <div class="logo">Hope Mystica <span>Admin</span></div>
-                <div style="display:flex; align-items:center; gap:1rem;">
-                    <span id="user-email"></span>
-                    <button id="logout-btn" class="btn-logout">Logout</button>
-                </div>
-            </nav>
-        </header>
+    <p class="price-note">Prices may change when the design changes. Contact us for a custom quote!</p>
+</section>
 
-        <section class="admin-content">
-            <div class="container">
-                <h2>Add New Cake</h2>
+<!-- SHOWCASE -->
+<section class="showcase fade-in">
+    <h2>Our Stunning Creations Will Leave You Speechless</h2>
 
-                <form id="add-cake-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Title *</label>
-                            <input type="text" id="title" required>
-                        </div>
+    <div class="grid">
+        <div class="gallery-item">
+            <img src="https://t4.ftcdn.net/jpg/04/29/86/17/360_F_429861717_yssTQhuX2jgSL9ds1v8o1brmJsXh5cWt.jpg" alt="Custom birthday cake in Kampala Uganda">
+            <div class="testimonial-overlay">"Wow! This cake was breathtaking and delicious!"</div>
+        </div>
 
-                        <div class="form-group">
-                            <label>Category *</label>
-                            <select id="category" required>
-                                <option value="">Select category</option>
-                                <option value="Wedding & Kwanjula Cakes">Wedding & Kwanjula Cakes</option>
-                                <option value="Birthday & Kids Cakes">Birthday & Kids Cakes</option>
-                                <option value="Traditional & Special Flavours">Traditional & Special Flavours</option>
-                                <option value="Luxury & Custom Cakes">Luxury & Custom Cakes</option>
-                            </select>
-                        </div>
+        <div class="gallery-item">
+            <img src="https://www.bluebellkitchen.co.uk/wp-content/uploads/2023/06/Kent-wedding-textured-white-cak-with-blush-roses.jpg" alt="Elegant wedding cake in Uganda">
+            <div class="testimonial-overlay">"Absolutely stunning – our guests were amazed!"</div>
+        </div>
 
-                        <div class="form-group">
-                            <label>Weight (e.g., 3 kgs)</label>
-                            <input type="text" id="weight" placeholder="e.g., 3 kgs">
-                        </div>
+        <div class="gallery-item">
+            <img src="https://funcakes.com/content/uploads/2020/03/Beestenboel_A1-960x720-c-default.jpg" alt="Kids themed birthday cake Kampala">
+            <div class="testimonial-overlay">"The kids went wild – pure magic!"</div>
+        </div>
 
-                        <div class="form-group">
-                            <label>Price (UGX)</label>
-                            <input type="number" id="price" placeholder="e.g., 280000">
-                        </div>
+        <div class="gallery-item">
+            <img src="https://miasbrooklyn.com/wp-content/uploads/2025/05/Elegant-Pink-Floral-Custom-Cake-Mias-Bakery-Wedding-Cakes.jpg" alt="Luxury floral cake Kampala">
+            <div class="testimonial-overlay">"Incredible detail and taste – pure perfection!"</div>
+        </div>
 
-                        <div class="form-group full-width">
-                            <label>Description</label>
-                            <textarea id="description" rows="4" placeholder="Optional short description"></textarea>
-                        </div>
+        <div class="gallery-item">
+            <img src="https://www.anaparzychcakes.com/wp-content/uploads/2024/04/20190324_17-42-06-71_Parzych_Ana_Tutorial_COM_j3-Edit-scaled.jpg" alt="Vintage rose cake Uganda">
+            <div class="testimonial-overlay">"Wow factor 10/10 – highly recommend!"</div>
+        </div>
 
-                        <div class="form-group full-width">
-                            <label>Cake Image * (JPG/PNG, max 5MB)</label>
-                            <input type="file" id="image" accept="image/jpeg,image/png" required>
-                            <div id="upload-progress" class="hidden">
-                                <progress id="progress-bar" value="0" max="100"></progress>
-                                <span id="progress-text">0%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-submit">Upload Cake</button>
-                    <p id="message"></p>
-                </form>
-
-                <h2 style="margin-top: 4rem;">Current Cakes</h2>
-                <div id="cakes-list"></div>
-            </div>
-        </section>
+        <div class="gallery-item">
+            <img src="https://thisdelicioushouse.com/wp-content/uploads/2019/05/fullsizeoutput_3ba0.jpeg" alt="Peppa Pig kids cake Kampala">
+            <div class="testimonial-overlay">"So fun and tasty – kids loved it!"</div>
+        </div>
     </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>Hope Mystica Cakes | Bugolobi Spring Valley Apartments, Kampala, Uganda</p>
+    <p>
+        Call us:
+        <a href="tel:+256701854289">0701 854 289</a> |
+        <a href="tel:+256775664822">0775 664 822</a>
+    </p>
+
+    <div class="social-icons">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+    </div>
+
+    <p>&copy; <span id="year"></span> Hope Mystica Cakes. All rights reserved.</p>
+</footer>
+
+<!-- WHATSAPP BUTTON -->
+<a href="https://wa.me/256701854289?text=Hi%20Hope%20Mystica%20Cakes%2C%20I'd%20like%20to%20place%20an%20order!" 
+   class="whatsapp-btn" 
+   target="_blank" 
+   aria-label="Order on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
 </body>
-                    </html>
+    </html>
