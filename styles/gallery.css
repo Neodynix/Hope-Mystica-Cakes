@@ -1,12 +1,11 @@
-/* gallery.css - Optimized for Cross-Browser Image Display */
+/* gallery.css - Dynamic Gallery Styles */
 
-/* Hero Section */
 .gallery-hero {
     position: relative;
     height: 70vh;
     min-height: 500px;
     background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                url('https://raw.githubusercontent.com/Neodynix/Hope-Mystica-Cakes/refs/heads/main/images/background3.jpg?token=GHSAT0AAAAAADRIXZBO3YUVT4325X7SNUJY2KGYSUA') center/cover no-repeat;
+                url('https://images.unsplash.com/photo-1559620186-9b68c6d6bd5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,7 +30,6 @@
     margin-top: 1rem;
 }
 
-/* Gallery Content */
 .gallery-content {
     padding: 8rem 5% 6rem;
     background: #f9f9f9;
@@ -50,7 +48,6 @@
     margin: 4rem 0 3rem;
 }
 
-/* Grid Layout */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -58,7 +55,6 @@
     margin-bottom: 4rem;
 }
 
-/* Gallery Items */
 .gallery-item {
     position: relative;
     overflow: hidden;
@@ -76,33 +72,53 @@
     object-position: center;
     transition: transform 0.8s ease;
     display: block;
-    position: relative;
-    z-index: 1;
 }
 
 .gallery-item:hover img {
     transform: scale(1.15);
 }
 
-/* Overlay Text */
 .gallery-item .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(transparent, rgba(0,196,180,0.9));
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
     color: white;
-    padding: 2rem 1rem 1rem;
+    padding: 3rem 1.5rem 1.5rem;
     text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1.7;
     opacity: 0;
     transition: opacity 0.5s ease;
-    z-index: 2;
 }
 
 .gallery-item:hover .overlay {
     opacity: 1;
+}
+
+.gallery-item .overlay strong {
+    display: block;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #00C4B4;
+}
+
+.gallery-item .overlay em {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #00C4B4;
+    padding: 6rem 2rem;
+    grid-column: 1 / -1;
+}
+
+.loading i {
+    margin-right: 1rem;
 }
 
 /* Mobile Adjustments */
@@ -136,6 +152,11 @@
     .gallery-item {
         height: 350px;
     }
+
+    .gallery-item .overlay {
+        font-size: 1rem;
+        padding: 2.5rem 1rem 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -146,4 +167,9 @@
     .gallery-item {
         height: 300px;
     }
-}
+
+    .gallery-item .overlay {
+        padding: 2rem 1rem 1rem;
+        font-size: 0.95rem;
+    }
+    }
