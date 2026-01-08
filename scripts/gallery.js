@@ -1,6 +1,6 @@
 // === CONFIGURE YOUR SUPABASE DETAILS HERE ===
-const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';          // e.g., https://abcde.supabase.co
-const SUPABASE_ANON_KEY = 'your-public-anon-key-here';            // Safe to expose with RLS enabled
+const SUPABASE_URL = 'https://xfinpgndgdpbeltiyvub.supabase.co';          // e.g., https://abcde.supabase.co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmaW5wZ25kZ2RwYmVsdGl5dnViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NzYzNzksImV4cCI6MjA4MzQ1MjM3OX0.Q26zDDFutnFFMi4XpJEgJYgzc5VkKl65XrQKgiCBiPo';            // Safe to expose with RLS enabled
 
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
