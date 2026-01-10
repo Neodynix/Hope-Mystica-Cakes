@@ -1,122 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Hope Mystica Cakes</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel - Hope Mystica Cakes</title>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/admin.css" />
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
-<!-- ================= LOGIN SCREEN ================= -->
-<div id="login-screen" class="auth-container" style="display:flex;">
-    <div class="auth-card">
-        <h1>Admin Login</h1>
-        <p>Hope Mystica Cakes Management</p>
-
-        <form id="login-form">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-
-        <p id="auth-message" class="error-message"></p>
+  <!-- ================= LOGIN SCREEN ================= -->
+  <section id="login-section" class="login-section">
+    <div class="login-container">
+      <h2>Admin Login</h2>
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <p id="login-error" class="error" style="display: none;"></p>
     </div>
-</div>
+  </section>
 
-<!-- ================= ADMIN DASHBOARD ================= -->
-<div id="admin-dashboard" style="display:none;">
-
+  <!-- ================= ADMIN DASHBOARD ================= -->
+  <section id="admin-container" class="admin-container" style="display: none;">
     <header>
-        <nav>
-            <div class="logo">
-                Hope Mystica <span>Admin</span>
-            </div>
-
-            <div style="display:flex; align-items:center; gap:1rem;">
-                <span id="user-email"></span>
-                <button id="logout-btn" class="btn-logout">Logout</button>
-            </div>
-        </nav>
+      <span class="logo">Hope Mystica Cakes - Admin</span>
+      <button id="logout-btn" class="btn btn-logout">Logout</button>
     </header>
 
-    <section class="admin-content">
-        <div class="container">
+    <main>
+      <!-- Example: Add Cake Form -->
+      <h2>Add New Cake</h2>
+      <form id="add-cake-form">
+        <input type="text" id="title" placeholder="Cake Title" required />
+        <input type="text" id="category" placeholder="Category" required />
+        <input type="text" id="weight" placeholder="Weight (e.g., 3 kgs)" />
+        <input type="number" id="price" placeholder="Price (UGX)" />
+        <textarea id="description" placeholder="Description"></textarea>
+        <input type="file" id="image" accept="image/*" required />
+        <button type="submit">Upload Cake</button>
+      </form>
 
-            <!-- ===== ADD CAKE FORM ===== -->
-            <h2>Add New Cake</h2>
+      <!-- Cakes List -->
+      <h2>Existing Cakes</h2>
+      <div id="cakes-list"></div>
+    </main>
+  </section>
 
-            <form id="add-cake-form">
-                <div class="form-grid">
+  <!-- Loading Popup -->
+  <div id="loading-popup" class="loading-popup" style="display: none;">
+    <div class="loading-content">
+      <p>Processing...</p>
+      <div class="spinner"></div>
+    </div>
+  </div>
 
-                    <div class="form-group">
-                        <label>Title *</label>
-                        <input type="text" id="title" required>
-                    </div>
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p id="confirmMessage"></p>
+      <button id="confirmYes" class="btn">Yes</button>
+      <button id="confirmNo" class="btn btn-cancel">No</button>
+    </div>
+  </div>
 
-                    <div class="form-group">
-                        <label>Category *</label>
-                        <select id="category" required>
-                            <option value="">Select category</option>
-                            <option value="Wedding & Kwanjula Cakes">Wedding & Kwanjula Cakes</option>
-                            <option value="Birthday & Kids Cakes">Birthday & Kids Cakes</option>
-                            <option value="Traditional & Special Flavours">Traditional & Special Flavours</option>
-                            <option value="Luxury & Custom Cakes">Luxury & Custom Cakes</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Weight (e.g., 3 kgs)</label>
-                        <input type="text" id="weight" placeholder="e.g., 3 kgs">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Price (UGX)</label>
-                        <input type="number" id="price" placeholder="e.g., 280000">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Description</label>
-                        <textarea id="description" rows="4" placeholder="Optional short description"></textarea>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Cake Image * (JPG/PNG, max 5MB)</label>
-                        <input type="file" id="image" accept="image/jpeg,image/png" required>
-
-                        <div id="upload-progress" class="hidden">
-                            <progress id="progress-bar" value="0" max="100"></progress>
-                            <span id="progress-text">0%</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <button type="submit" class="btn-submit">Upload Cake</button>
-                <p id="message"></p>
-            </form>
-
-            <!-- ===== CAKES LIST ===== -->
-            <h2 style="margin-top:4rem;">Current Cakes</h2>
-            <div id="cakes-list"></div>
-
-        </div>
-    </section>
-
-</div>
-
-<!-- ================= ADMIN SCRIPT ================= -->
-<script src="scripts/admin.js"></script>
-
+  <!-- Scripts -->
+  <script type="module" src="scripts/admin.js"></script>
 </body>
-                        </html>
+              </html>
