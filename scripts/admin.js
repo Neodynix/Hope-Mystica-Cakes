@@ -1,183 +1,169 @@
-// scripts/admin.js
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-// ======== Supabase Config ========
+// === CONFIGURE YOUR SUPABASE DETAILS HERE ===
 const SUPABASE_URL = 'https://xfinpgndgdpbeltiyvub.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmaW5wZ25kZ2RwYmVsdGl5dnViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NzYzNzksImV4cCI6MjA4MzQ1MjM3OX0.Q26zDDFutnFFMi4XpJEgJYgzc5VkKl65XrQKgiCBiPo';
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ======== DOM Elements ========
-const loginSection = document.getElementById('login-section');
-const adminContainer = document.getElementById('admin-container');
-const loginForm = document.getElementById('loginForm');
-const loginError = document.getElementById('login-error');
-const logoutBtn = document.getElementById('logout-btn');
-const loadingPopup = document.getElementById('loading-popup');
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const addCakeForm = document.getElementById('add-cake-form');
-const cakesList = document.getElementById('cakes-list');
-
-const confirmModal = document.getElementById('confirmModal');
-const confirmMessage = document.getElementById('confirmMessage');
-const confirmYes = document.getElementById('confirmYes');
-const confirmNo = document.getElementById('confirmNo');
-
-// ======== Utility Functions ========
-function showLoading(show = true) {
-  loadingPopup.style.display = show ? 'flex' : 'none';
-}
-
-function showError(msg) {
-  loginError.style.display = 'block';
-  loginError.textContent = msg;
-}
-
-function showConfirm(message, callback) {
-  confirmMessage.textContent = message;
-  confirmModal.style.display = 'flex';
-  confirmYes.onclick = () => {
-    callback();
-    confirmModal.style.display = 'none';
-  };
-  confirmNo.onclick = () => {
-    confirmModal.style.display = 'none';
-  };
-}
-
-// ======== Auth Functions ========
+// Check if already logged in on page load
 async function checkAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    loginSection.style.display = 'none';
-    adminContainer.style.display = 'block';
-    fetchCakes();
-  } else {
-    loginSection.style.display = 'block';
-    adminContainer.style.display = 'none';
-  }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        showDashboard(session.user.email);
+        loadCakes();
+    }
 }
 
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = loginForm.email.value;
-  const password = loginForm.password.value;
-
-  showLoading(true);
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  showLoading(false);
-
-  if (error) {
-    showError(error.message);
-  } else {
-    loginSection.style.display = 'none';
-    adminContainer.style.display = 'block';
-    fetchCakes();
-  }
-});
-
-logoutBtn.addEventListener('click', async () => {
-  showLoading(true);
-  await supabase.auth.signOut();
-  showLoading(false);
-  loginSection.style.display = 'block';
-  adminContainer.style.display = 'none';
-});
-
-// ======== Cake Functions ========
-async function fetchCakes() {
-  showLoading(true);
-  const { data: cakes, error } = await supabase
-    .from('cakes')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  showLoading(false);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  cakesList.innerHTML = cakes.map(cake => `
-    <div class="cake-card">
-      <img src="${cake.image_url}" alt="${cake.title}" />
-      <div class="cake-info">
-        <h3>${cake.title}</h3>
-        <p>Category: ${cake.category}</p>
-        <p>Weight: ${cake.weight}</p>
-        <p>Price: UGX ${cake.price}</p>
-        <p>${cake.description || ''}</p>
-        <button class="delete-btn" data-id="${cake.id}">Delete</button>
-      </div>
-    </div>
-  `).join('');
-
-  // Attach delete event listeners
-  document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const cakeId = btn.getAttribute('data-id');
-      showConfirm('Are you sure you want to delete this cake?', () => deleteCake(cakeId));
-    });
-  });
-}
-
-async function deleteCake(cakeId) {
-  showLoading(true);
-  const { error } = await supabase
-    .from('cakes')
-    .delete()
-    .eq('id', cakeId);
-  showLoading(false);
-
-  if (error) {
-    alert('Failed to delete cake: ' + error.message);
-  } else {
-    fetchCakes();
-  }
-}
-
-addCakeForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const title = addCakeForm.title.value;
-  const category = addCakeForm.category.value;
-  const weight = addCakeForm.weight.value;
-  const price = parseFloat(addCakeForm.price.value);
-  const description = addCakeForm.description.value;
-  const imageFile = addCakeForm.image.files[0];
-
-  if (!imageFile) return alert('Please select an image');
-
-  showLoading(true);
-
-  // Upload image to Supabase Storage
-  const fileName = `${Date.now()}_${imageFile.name}`;
-  const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('cakes')
-    .upload(fileName, imageFile);
-
-  if (uploadError) {
-    showLoading(false);
-    return alert('Image upload failed: ' + uploadError.message);
-  }
-
-  // Get public URL
-  const { publicUrl } = supabase.storage.from('cakes').getPublicUrl(fileName);
-
-  // Insert cake record
-  const { error: insertError } = await supabase
-    .from('cakes')
-    .insert([{ title, category, weight, price, description, image_url: publicUrl }]);
-
-  showLoading(false);
-
-  if (insertError) {
-    alert('Failed to add cake: ' + insertError.message);
-  } else {
-    addCakeForm.reset();
-    fetchCakes();
-  }
-});
-
-// ======== Initialize ========
 checkAuth();
+
+// Login
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const message = document.getElementById('auth-message');
+
+    message.textContent = 'Logging in...';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+
+    if (error) {
+        message.textContent = error.message;
+    } else {
+        showDashboard(data.user.email);
+        loadCakes();
+    }
+});
+
+// Logout
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    document.getElementById('admin-dashboard').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('login-form').reset();
+    document.getElementById('auth-message').textContent = '';
+});
+
+// Show dashboard
+function showDashboard(email) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-dashboard').classList.remove('hidden');
+    document.getElementById('user-email').textContent = email;
+}
+
+// Add cake
+document.getElementById('add-cake-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const message = document.getElementById('message');
+    const progressContainer = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    const title = document.getElementById('title').value;
+    const category = document.getElementById('category').value;
+    const weight = document.getElementById('weight').value || null;
+    const price = document.getElementById('price').value ? Number(document.getElementById('price').value) : null;
+    const description = document.getElementById('description').value || null;
+    const file = document.getElementById('image').files[0];
+
+    if (!file) {
+        message.textContent = 'Please select an image';
+        return;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+    message.textContent = 'Uploading image...';
+    progressContainer.classList.remove('hidden');
+
+    // Upload image (requires user to be authenticated)
+    const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('cakes')
+        .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    if (uploadError) {
+        message.textContent = 'Upload failed: ' + uploadError.message;
+        progressContainer.classList.add('hidden');
+        return;
+    }
+
+    // Insert database record
+    const { error: dbError } = await supabase
+        .from('cakes')
+        .insert({
+            title,
+            category,
+            description,
+            weight,
+            price,
+            image_path: fileName
+        });
+
+    if (dbError) {
+        message.textContent = 'Failed to save cake: ' + dbError.message;
+    } else {
+        message.textContent = 'Cake added successfully!';
+        document.getElementById('add-cake-form').reset();
+        loadCakes();
+    }
+
+    progressContainer.classList.add('hidden');
+});
+
+// Load and display cakes
+async function loadCakes() {
+    const { data: cakes, error } = await supabase
+        .from('cakes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        document.getElementById('cakes-list').innerHTML = '<p>Error loading cakes</p>';
+        return;
+    }
+
+    let html = '';
+    const imageBase = `${SUPABASE_URL}/storage/v1/object/public/cakes/`;
+
+    cakes.forEach(cake => {
+        html += `
+            <div class="cake-card">
+                <img src="${imageBase}${cake.image_path}" alt="${cake.title}">
+                <div class="cake-info">
+                    <h3>${cake.title}</h3>
+                    <p><strong>Category:</strong> ${cake.category}</p>
+                    ${cake.weight ? `<p><strong>Weight:</strong> ${cake.weight}</p>` : ''}
+                    ${cake.price ? `<p><strong>Price:</strong> UGX ${cake.price.toLocaleString()}/-</p>` : ''}
+                    ${cake.description ? `<p>${cake.description}</p>` : ''}
+                    <button class="delete-btn" data-id="${cake.id}" data-path="${cake.image_path}">Delete</button>
+                </div>
+            </div>`;
+    });
+
+    document.getElementById('cakes-list').innerHTML = html || '<p>No cakes yet.</p>';
+
+    // Delete handlers
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!confirm('Delete this cake permanently?')) return;
+
+            const id = btn.dataset.id;
+            const path = btn.dataset.path;
+
+            // Delete image
+            await supabase.storage.from('cakes').remove([path]);
+
+            // Delete record
+            await supabase.from('cakes').delete().eq('id', id);
+
+            loadCakes();
+        });
+    });
+                                                       }
