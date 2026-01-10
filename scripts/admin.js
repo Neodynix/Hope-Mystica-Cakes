@@ -1,5 +1,4 @@
-// scripts/admin.js - Fixed Supabase Authentication
-
+// scripts/admin.js
 // ============================================
 // STEP 1: Configure your Supabase credentials
 // ============================================
@@ -10,10 +9,11 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============================================
-// STEP 2: Main initialization
+// STEP 2: DOMContentLoaded - Main initialization
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-  // Get DOM elements
+
+  // DOM elements
   const loginSection = document.getElementById('login-screen');
   const adminContainer = document.getElementById('admin-dashboard');
   const loginForm = document.getElementById('login-form');
@@ -22,11 +22,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const addCakeForm = document.getElementById('add-cake-form');
 
   // ============================================
-  // Initialize admin features after login
+  // Utility: Show login error/status
+  // ============================================
+  function showLoginMessage(message, color = 'red') {
+    loginError.style.display = 'block';
+    loginError.style.color = color;
+    loginError.textContent = message;
+  }
+
+  // ============================================
+  // Initialize admin after login
   // ============================================
   const initAdmin = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error('Error fetching user:', error);
+      return;
+    }
+
     if (user) {
       document.getElementById('user-email').textContent = user.email || 'Admin';
       await loadCakes();
@@ -38,9 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ============================================
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-  if (sessionError) {
-    console.error('Session check error:', sessionError);
-  }
+  if (sessionError) console.error('Session check error:', sessionError);
 
   if (session) {
     // User is logged in
@@ -48,13 +59,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     adminContainer.style.display = 'block';
     await initAdmin();
   } else {
-    // User is not logged in
+    // User not logged in
     loginSection.style.display = 'flex';
     adminContainer.style.display = 'none';
   }
 
   // ============================================
-  // Handle login form submission
+  // LOGIN FORM SUBMIT
   // ============================================
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -62,45 +73,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    // Show loading message
-    loginError.textContent = 'Logging in...';
-    loginError.style.display = 'block';
-    loginError.style.color = '#666';
+    showLoginMessage('🔄 Signing in...', '#555');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
 
-      if (error) {
-        throw error;
-      }
-
-      // Login successful - the auth state change listener will handle UI updates
+      showLoginMessage('✅ Login successful!', 'green');
       loginForm.reset();
 
     } catch (error) {
       console.error('Login error:', error);
-      loginError.textContent = error.message || 'Login failed. Please check your credentials.';
-      loginError.style.color = 'red';
-      loginError.style.display = 'block';
+      showLoginMessage(error.message || '❌ Login failed', 'red');
     }
   });
 
   // ============================================
-  // Handle logout
+  // LOGOUT
   // ============================================
   logoutBtn.addEventListener('click', async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        throw error;
-      }
-
-      // Logout will be handled by auth state change listener
-      
+      if (error) throw error;
     } catch (error) {
       console.error('Logout error:', error);
       alert('Logout failed. Please try again.');
@@ -108,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ============================================
-  // Handle add cake form submission
+  // ADD CAKE FORM
   // ============================================
   addCakeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -135,13 +129,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // File validation
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     const maxSize = 5 * 1024 * 1024; // 5MB
-
     if (!allowedTypes.includes(imageFile.type)) {
       messageEl.textContent = 'Please upload a JPG or PNG image.';
       messageEl.style.color = 'red';
       return;
     }
-
     if (imageFile.size > maxSize) {
       messageEl.textContent = 'Image must be less than 5MB.';
       messageEl.style.color = 'red';
@@ -151,60 +143,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       // Show progress
       progressDiv.classList.remove('hidden');
-      messageEl.textContent = 'Uploading...';
+      messageEl.textContent = 'Uploading image...';
       messageEl.style.color = '#00C4B4';
 
-      // Create unique filename
+      // Generate unique filename
       const timestamp = Date.now();
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${timestamp}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      // Upload image to Supabase Storage
+      // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('cakes')
-        .upload(fileName, imageFile, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
+        .upload(fileName, imageFile, { cacheControl: '3600', upsert: false });
+      if (uploadError) throw uploadError;
 
       progressBar.value = 50;
       progressText.textContent = '50%';
 
-      // Insert cake data into database
+      // Insert into database
       const { data: insertData, error: insertError } = await supabase
         .from('cakes')
-        .insert([
-          {
-            title,
-            category,
-            weight: weight || null,
-            price: price ? parseFloat(price) : null,
-            description: description || null,
-            image_path: fileName
-          }
-        ])
-        .select();
-
+        .insert([{
+          title,
+          category,
+          weight: weight || null,
+          price: price ? parseFloat(price) : null,
+          description: description || null,
+          image_path: fileName
+        }]);
       if (insertError) {
-        // If database insert fails, delete the uploaded image
+        // Remove uploaded image if DB insert fails
         await supabase.storage.from('cakes').remove([fileName]);
         throw insertError;
       }
 
-      // Success!
+      // Success
       progressBar.value = 100;
       progressText.textContent = '100%';
-      messageEl.textContent = '✓ Cake added successfully!';
+      messageEl.textContent = '✅ Cake added successfully!';
       messageEl.style.color = 'green';
-
-      // Reset form
       addCakeForm.reset();
 
-      // Hide progress after 2 seconds
       setTimeout(() => {
         progressDiv.classList.add('hidden');
         progressBar.value = 0;
@@ -212,12 +191,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         messageEl.textContent = '';
       }, 2000);
 
-      // Reload cakes list
       await loadCakes();
 
     } catch (error) {
       console.error('Upload error:', error);
-      messageEl.textContent = `Error: ${error.message}`;
+      messageEl.textContent = `❌ Error: ${error.message}`;
       messageEl.style.color = 'red';
       progressDiv.classList.add('hidden');
       progressBar.value = 0;
@@ -226,20 +204,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ============================================
-  // Load and display all cakes
+  // LOAD CAKES
   // ============================================
   async function loadCakes() {
     const cakesList = document.getElementById('cakes-list');
-    
+
     try {
       const { data: cakes, error } = await supabase
         .from('cakes')
         .select('*')
         .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (!cakes || cakes.length === 0) {
         cakesList.innerHTML = '<p style="text-align:center; color:#666; padding:2rem;">No cakes added yet.</p>';
@@ -248,7 +223,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const imageBase = `${SUPABASE_URL}/storage/v1/object/public/cakes/`;
       let html = '';
-
       cakes.forEach(cake => {
         html += `
           <div class="cake-card">
@@ -263,69 +237,48 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>`;
       });
-
       cakesList.innerHTML = html;
 
-      // Add delete functionality
+      // Delete functionality
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.onclick = async () => {
-          if (!confirm('Are you sure you want to delete this cake? This action cannot be undone.')) {
-            return;
-          }
-
+          if (!confirm('Are you sure you want to delete this cake?')) return;
           const cakeId = btn.dataset.id;
           const imagePath = btn.dataset.path;
 
           try {
-            // Delete image from storage
-            const { error: storageError } = await supabase.storage
-              .from('cakes')
-              .remove([imagePath]);
-
-            if (storageError) {
-              console.error('Storage deletion error:', storageError);
-            }
-
-            // Delete record from database
-            const { error: dbError } = await supabase
-              .from('cakes')
-              .delete()
-              .eq('id', cakeId);
-
-            if (dbError) {
-              throw dbError;
-            }
-
-            // Reload cakes list
+            await supabase.storage.from('cakes').remove([imagePath]);
+            const { error: dbError } = await supabase.from('cakes').delete().eq('id', cakeId);
+            if (dbError) throw dbError;
             await loadCakes();
-            
           } catch (error) {
             console.error('Delete error:', error);
-            alert('Failed to delete cake. Please try again.');
+            alert('Failed to delete cake.');
           }
         };
       });
 
     } catch (error) {
       console.error('Load cakes error:', error);
-      cakesList.innerHTML = '<p style="text-align:center; color:red; padding:2rem;">Error loading cakes. Please refresh the page.</p>';
+      cakesList.innerHTML = '<p style="text-align:center; color:red; padding:2rem;">Error loading cakes. Refresh page.</p>';
     }
   }
 
   // ============================================
-  // Listen for auth state changes (MUST BE LAST)
+  // AUTH STATE CHANGE (SIGN IN / SIGN OUT)
   // ============================================
   supabase.auth.onAuthStateChange(async (event, session) => {
     console.log('Auth state changed:', event, session ? 'Session exists' : 'No session');
-    
+
     if (event === 'SIGNED_OUT') {
       loginSection.style.display = 'flex';
       adminContainer.style.display = 'none';
     } else if (event === 'SIGNED_IN' && session) {
-      loginError.style.display = 'none';
+      showLoginMessage('', 'green');
       loginSection.style.display = 'none';
       adminContainer.style.display = 'block';
       await initAdmin();
     }
   });
+
 });
