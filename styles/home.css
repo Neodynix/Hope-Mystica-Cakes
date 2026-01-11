@@ -121,6 +121,101 @@
     opacity: 1;
 }
 
+/* NEW PRICING SECTION STYLES */
+.pricing {
+    padding: 8rem 5% 6rem;
+    text-align: center;
+    background: white;
+}
+
+.pricing h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.5rem;
+    color: #00C4B4;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+.price-image-container {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.price-list-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.price-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    text-align: left;
+}
+
+.price-column {
+    background: #f9f9f9;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.price-column h3 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #ff69b4;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.price-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.price-column li {
+    font-size: 1.1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.price-column li:last-child {
+    border-bottom: none;
+}
+
+.price-column span {
+    font-weight: 600;
+    color: #00C4B4;
+}
+
+.price-column p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+.price-note {
+    font-style: italic;
+    color: #888;
+    font-size: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 768px) {
     .hero {
@@ -168,6 +263,32 @@
     .showcase h2 {
         font-size: 2.5rem;
     }
+
+    /* Pricing mobile adjustments */
+    .pricing {
+        padding: 6rem 5% 4rem;
+    }
+
+    .pricing h2 {
+        font-size: 2.8rem;
+    }
+
+    .price-details {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .price-column {
+        padding: 2rem;
+    }
+
+    .price-column h3 {
+        font-size: 2rem;
+    }
+
+    .price-image-container {
+        margin-bottom: 3rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -181,4 +302,9 @@
         white-space: normal;
         max-width: 90%;
     }
-}
+
+    .price-column li {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+        }
