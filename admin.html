@@ -3,55 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Hope Mystica Cakes</title>
+    <title>Admin Dashboard - Hope Mystica Cakes</title>
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="scripts/admin.js" defer></script>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="login-screen" class="auth-container">
-        <div class="auth-card">
-            <h1>Admin Login</h1>
-            <p>Hope Mystica Cakes Management</p>
-            <form id="login-form">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-            <p id="auth-message" class="error-message"></p>
-        </div>
-    </div>
 
-    <!-- Admin Dashboard (hidden until logged in) -->
-    <div id="admin-dashboard" class="hidden">
-        <header>
-            <nav>
-                <div class="logo">Hope Mystica <span>Admin</span></div>
-                <div style="display:flex; align-items:center; gap:1rem;">
-                    <span id="user-email"></span>
-                    <button id="logout-btn" class="btn-logout">Logout</button>
-                </div>
-            </nav>
-        </header>
+    <header class="admin-header">
+        <nav class="container">
+            <div class="logo">Hope Mystica <span>Admin Panel</span></div>
+            <a href="index.html" class="view-site-btn">View Website</a>
+        </nav>
+    </header>
 
-        <section class="admin-content">
-            <div class="container">
-                <h2>Add New Cake</h2>
-
+    <main class="admin-content">
+        <div class="container">
+            
+            <section class="upload-section">
+                <h2><i class="fas fa-plus-circle"></i> Add New Cake</h2>
                 <form id="add-cake-form">
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Title *</label>
-                            <input type="text" id="title" required>
+                            <input type="text" id="title" placeholder="e.g., Chocolate Truffle" required>
                         </div>
 
                         <div class="form-group">
@@ -67,37 +47,39 @@
 
                         <div class="form-group">
                             <label>Weight (e.g., 3 kgs)</label>
-                            <input type="text" id="weight" placeholder="e.g., 3 kgs">
+                            <input type="text" id="weight" placeholder="e.g., 2 kgs">
                         </div>
 
                         <div class="form-group">
                             <label>Price (UGX)</label>
-                            <input type="number" id="price" placeholder="e.g., 280000">
+                            <input type="number" id="price" placeholder="e.g., 150000">
                         </div>
 
                         <div class="form-group full-width">
                             <label>Description</label>
-                            <textarea id="description" rows="4" placeholder="Optional short description"></textarea>
+                            <textarea id="description" rows="3" placeholder="Short description of the cake..."></textarea>
                         </div>
 
                         <div class="form-group full-width">
-                            <label>Cake Image * (JPG/PNG, max 5MB)</label>
-                            <input type="file" id="image" accept="image/jpeg,image/png" required>
-                            <div id="upload-progress" class="hidden">
-                                <progress id="progress-bar" value="0" max="100"></progress>
-                                <span id="progress-text">0%</span>
-                            </div>
+                            <label>Cake Image *</label>
+                            <input type="file" id="image" accept="image/*" required>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit">Upload Cake</button>
+                    <button type="submit" class="btn-submit">Upload to Gallery</button>
                     <p id="message"></p>
                 </form>
+            </section>
 
-                <h2 style="margin-top: 4rem;">Current Cakes</h2>
-                <div id="cakes-list"></div>
-            </div>
-        </section>
-    </div>
+            <hr class="section-divider">
+
+            <section class="list-section">
+                <h2><i class="fas fa-images"></i> Current Gallery</h2>
+                <div id="cakes-list" class="admin-grid">
+                    </div>
+            </section>
+        </div>
+    </main>
+
 </body>
-                      </html>
+                            </html>
