@@ -4,21 +4,20 @@ const SUPABASE_URL = 'https://xfinpgndgdpbeltiyvub.supabase.co';
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmaW5wZ25kZ2RwYmVsdGl5dnViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NzYzNzksImV4cCI6MjA4MzQ1MjM3OX0.Q26zDDFutnFFMi4XpJEgJYgzc5VkKl65XrQKgiCBiPo';
 
-// ✅ FIX: use a DIFFERENT variable name
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use ONE consistent client name
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 console.log("Supabase client initialized");
 
 // ==================== DOM REFERENCES ====================
 
-const loginForm     = document.getElementById('login-form');
-const loginBtn      = document.getElementById('login-btn');
-const loginMessage  = document.getElementById('login-message');
-const loginOverlay  = document.getElementById('login-overlay');
-const adminMain     = document.getElementById('admin-main');
-const logoutBtn     = document.getElementById('logout-btn');
-const currentUserEl = document.getElementById('current-user-email');
-
+const loginForm        = document.getElementById('login-form');
+const loginBtn         = document.getElementById('login-btn');
+const loginMessage     = document.getElementById('login-message');
+const loginOverlay     = document.getElementById('login-overlay');
+const adminMain        = document.getElementById('admin-main');
+const logoutBtn        = document.getElementById('logout-btn');
+const currentUserEl    = document.getElementById('current-user-email');
 const cakesList        = document.getElementById('cakes-list');
 const addCakeForm      = document.getElementById('add-cake-form');
 const imageInput       = document.getElementById('image');
@@ -29,13 +28,20 @@ const removeImgBtn     = document.getElementById('remove-img-btn');
 const submitBtn        = document.getElementById('submit-btn');
 const messageEl        = document.getElementById('message');
 
+// Mobile menu elements
+const hamburgerBtn     = document.getElementById('hamburger-btn');
+const mobileMenu       = document.getElementById('mobile-menu');
+const mobileLogoutBtn  = document.getElementById('mobile-logout-btn');
+const mobileUserEmail  = document.getElementById('mobile-user-email');
+
 // ==================== AUTH STATE LISTENER ====================
 
-sb.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange((event, session) => {
   if (session?.user) {
     loginOverlay.classList.add('hidden');
     adminMain.classList.remove('hidden');
-    currentUserEl.textContent = session.user.email;
+    currentUserEl.textContent    = session.user.email || 'Admin';
+    if (mobileUserEmail) mobileUserEmail.textContent = session.user.email || 'Admin';
     loadCakes();
   } else {
     loginOverlay.classList.remove('hidden');
@@ -47,11 +53,12 @@ sb.auth.onAuthStateChange((event, session) => {
 // ==================== INITIAL SESSION CHECK ====================
 
 async function initAuth() {
-  const { data } = await sb.auth.getSession();
-  if (data.session?.user) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) {
     loginOverlay.classList.add('hidden');
     adminMain.classList.remove('hidden');
-    currentUserEl.textContent = data.session.user.email;
+    currentUserEl.textContent = session.user.email || 'Admin';
+    if (mobileUserEmail) mobileUserEmail.textContent = session.user.email || 'Admin';
     loadCakes();
   }
 }
@@ -66,14 +73,14 @@ loginForm.addEventListener('submit', async (e) => {
   loginBtn.textContent = 'Signing in...';
   loginMessage.textContent = '';
 
-  const email = document.getElementById('email').value.trim();
+  const email    = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
 
-  const { error } = await sb.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     loginMessage.style.color = 'red';
-    loginMessage.textContent = 'Invalid email or password';
+    loginMessage.textContent = error.message || 'Invalid email or password';
   }
 
   loginBtn.disabled = false;
@@ -82,183 +89,192 @@ loginForm.addEventListener('submit', async (e) => {
 
 // ==================== LOGOUT ====================
 
-logoutBtn.addEventListener('click', async () => {
-  await sb.auth.signOut();
-});
-// ==================== INITIALIZE ====================
-window.addEventListener('DOMContentLoaded', () => {
-loadCakes();
-});
+async function handleLogout() {
+  if (!confirm('Log out now?')) return;
+  
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    alert("Logout failed: " + error.message);
+  }
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', handleLogout);
+}
+if (mobileLogoutBtn) {
+  mobileLogoutBtn.addEventListener('click', handleLogout);
+}
 
 // ==================== IMAGE PREVIEW ====================
+
 imageInput.addEventListener('change', e => {
-const file = e.target.files[0];
-if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-fileNameDisplay.textContent = file.name;    
-const reader = new FileReader();    
-reader.onload = ev => {    
-    previewImg.src = ev.target.result;    
-    previewContainer.classList.remove('hidden');    
-};    
-reader.readAsDataURL(file);
-
+  fileNameDisplay.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    previewImg.src = ev.target.result;
+    previewContainer.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
 });
 
 removeImgBtn.addEventListener('click', () => {
-imageInput.value = "";
-fileNameDisplay.textContent = "Choose an image...";
-previewImg.src = "";
-previewContainer.classList.add('hidden');
+  imageInput.value = "";
+  fileNameDisplay.textContent = "Choose an image...";
+  previewImg.src = "";
+  previewContainer.classList.add('hidden');
 });
 
 // ==================== LOAD CAKES ====================
 
 async function loadCakes() {
-  const { data, error } = await sb.from('cakes').select('*').order('created_at', { ascending: false });
-  if (error) return console.error(error);
+  if (!cakesList) return;
 
-  const storageUrl = `${SUPABASE_URL}/storage/v1/object/public/cakes/`;
+  cakesList.innerHTML = '<p style="text-align:center">Loading cakes...</p>';
 
-  cakesList.innerHTML = data.map(cake => `
-    <div class="cake-card">
-      <img src="${storageUrl}${cake.image_path}">
-      <div class="cake-info">
-        <h3>${cake.title}</h3>
-        <p>UGX ${cake.price?.toLocaleString()}</p>
-        <button class="delete-btn" onclick="deleteCake('${cake.id}','${cake.image_path}')">
-          Delete
-        </button>
+  try {
+    const { data, error } = await supabase
+      .from('cakes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      cakesList.innerHTML = '<p style="text-align:center">No cakes found.</p>';
+      return;
+    }
+
+    const storageUrl = `${SUPABASE_URL}/storage/v1/object/public/cakes/`;
+
+    cakesList.innerHTML = data.map(cake => `
+      <div class="cake-card">
+        <img src="${storageUrl}${cake.image_path}"
+             alt="${cake.title || 'Cake'}"
+             onerror="this.src='https://via.placeholder.com/300x250?text=No+Image'">
+        <div class="cake-info">
+          <h3>${cake.title || 'Untitled'}</h3>
+          <p>UGX ${cake.price ? Number(cake.price).toLocaleString() : '—'}</p>
+          <button class="delete-btn" onclick="deleteCake('${cake.id}','${cake.image_path}')">
+            Delete
+          </button>
+        </div>
       </div>
-    </div>
-  `).join('');
-}
+    `).join('');
 
+  } catch (err) {
+    console.error(err);
+    cakesList.innerHTML = `<p style="color:red; text-align:center">Error: ${err.message}</p>`;
+  }
+}
 
 // ==================== ADD CAKE ====================
+
 addCakeForm.addEventListener('submit', async e => {
-e.preventDefault();
+  e.preventDefault();
 
-const submitBtn = document.getElementById('submit-btn');    
-const message = document.getElementById('message');    
-const file = imageInput.files[0];    
+  const file = imageInput.files[0];
+  if (!file) {
+    alert("Please select an image.");
+    return;
+  }
 
-if (!file) {    
-    alert("Please select an image.");    
-    return;    
-}    
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading...';
+  messageEl.textContent = '';
+  messageEl.style.color = '';
 
-submitBtn.disabled = true;    
-submitBtn.textContent = 'Uploading...';    
-message.textContent = '';    
+  try {
+    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+    const fileName = `${Date.now()}_${cleanName}`;
 
-try {    
-    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');    
-    const fileName = `${Date.now()}_${cleanName}`;    
+    // 1. Upload image
+    const { error: uploadError } = await supabase
+      .storage
+      .from('cakes')
+      .upload(fileName, file);
 
-    // 1️⃣ Upload image    
-    const { error: uploadError } = await supabaseClient    
-        .storage    
-        .from('cakes')    
-        .upload(fileName, file);    
+    if (uploadError) throw uploadError;
 
-    if (uploadError) throw uploadError;    
+    // 2. Insert record
+    const { error: insertError } = await supabase
+      .from('cakes')
+      .insert([{
+        title:       document.getElementById('title').value.trim(),
+        category:    document.getElementById('category').value,
+        weight:      document.getElementById('weight').value.trim() || null,
+        price:       Number(document.getElementById('price').value) || null,
+        description: document.getElementById('description').value.trim(),
+        image_path:  fileName
+      }]);
 
-    // 2️⃣ Insert record    
-    const { error: insertError } = await supabaseClient    
-        .from('cakes')    
-        .insert([{    
-            title: document.getElementById('title').value,    
-            category: document.getElementById('category').value,    
-            weight: document.getElementById('weight').value,    
-            price: document.getElementById('price').value || null,    
-            description: document.getElementById('description').value,    
-            image_path: fileName    
-        }]);    
+    if (insertError) {
+      // Cleanup uploaded file if DB insert fails
+      await supabase.storage.from('cakes').remove([fileName]);
+      throw insertError;
+    }
 
-    if (insertError) {    
-        await supabaseClient.storage.from('cakes').remove([fileName]);    
-        throw insertError;    
-    }    
+    messageEl.textContent = "Cake added successfully!";
+    messageEl.style.color = "green";
 
-    message.textContent = "Cake added successfully!";    
-    message.style.color = "green";    
+    addCakeForm.reset();
+    previewContainer.classList.add('hidden');
+    fileNameDisplay.textContent = "Choose an image...";
 
-    addCakeForm.reset();    
-    previewContainer.classList.add('hidden');    
-    fileNameDisplay.textContent = "Choose an image...";    
+    loadCakes();
 
-    loadCakes();    
-
-} catch (err) {    
-    console.error(err);    
-    message.textContent = err.message;    
-    message.style.color = "red";    
-} finally {    
-    submitBtn.disabled = false;    
-    submitBtn.textContent = 'Upload to Gallery';    
-}
-
+  } catch (err) {
+    console.error(err);
+    messageEl.textContent = err.message || "Failed to add cake";
+    messageEl.style.color = "red";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Upload to Gallery';
+  }
 });
-                 
+
 // ==================== DELETE CAKE ====================
+
 window.deleteCake = async (id, path) => {
-if (!confirm("Delete this cake?")) return;
+  if (!confirm("Delete this cake? This cannot be undone.")) return;
 
-try {    
-    await supabaseClient.storage.from('cakes').remove([path]);    
+  try {
+    // 1. Delete from storage
+    const { error: storageError } = await supabase
+      .storage
+      .from('cakes')
+      .remove([path]);
 
-    const { error } = await supabaseClient    
-        .from('cakes')    
-        .delete()    
-        .eq('id', id);    
+    if (storageError) console.warn("Storage delete failed:", storageError);
 
-    if (error) throw error;    
+    // 2. Delete from table
+    const { error: dbError } = await supabase
+      .from('cakes')
+      .delete()
+      .eq('id', id);
 
-    loadCakes();    
-} catch (err) {    
-    alert("Delete failed: " + err.message);    
-}
+    if (dbError) throw dbError;
 
+    loadCakes();
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed: " + (err.message || "Unknown error"));
+  }
 };
-                                                                       
 
 // ==================== MOBILE HAMBURGER MENU ====================
 
-const hamburgerBtn = document.getElementById('hamburger-btn');
-const mobileMenu = document.getElementById('mobile-menu');
-const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-const mobileUserEmail = document.getElementById('mobile-user-email');
-
-// Toggle mobile menu
 if (hamburgerBtn && mobileMenu) {
-    hamburgerBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('active');
-    });
-}
+  hamburgerBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('active');
+  });
 
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-    if (!hamburgerBtn?.contains(e.target) && !mobileMenu?.contains(e.target)) {
-        mobileMenu?.classList.remove('active');
+  // Close when clicking outside
+  document.addEventListener('click', e => {
+    if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+      mobileMenu.classList.remove('active');
     }
-});
-
-// Sync user email to mobile version too
-supabase.auth.onAuthStateChange((event, session) => {
-    if (session?.user) {
-        // ... your existing code ...
-
-        if (mobileUserEmail) {
-            mobileUserEmail.textContent = session.user.email || 'Admin';
-        }
-    }
-});
-
-// Mobile logout (same as desktop)
-if (mobileLogoutBtn) {
-    mobileLogoutBtn.addEventListener('click', async () => {
-        if (!confirm('Log out now?')) return;
-        await supabase.auth.signOut();
-    });
-    }
+  });
+  }
