@@ -5,7 +5,7 @@
     height: 70vh;
     min-height: 500px;
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-                url('https://raw.githubusercontent.com/Neodynix/Hope-Mystica-Cakes/refs/heads/main/images/background4.jpg?token=GHSAT0AAAAAADRIXZBPQK53GCUHNZ5CJ27S2KGYWCQ') center/cover no-repeat;
+                url('https://hope-mystica-cakes.pages.dev/images/background1.jpg') center/cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
