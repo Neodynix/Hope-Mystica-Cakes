@@ -9,19 +9,94 @@
     <meta name="description" content="Explore our stunning gallery of handcrafted cakes for weddings, kwanjula, birthdays, and special occasions in Kampala, Uganda.">
     <meta name="keywords" content="cake gallery Kampala, wedding cakes Uganda, kwanjula cakes, birthday cakes Kampala, Hope Mystica Cakes">
 
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/gallery.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- ✅ Supabase v2 UMD -->
+    <!-- ✅ Supabase v2 UMD (REQUIRED) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 
+    <!-- Scripts -->
     <script src="scripts/main.js" defer></script>
     <script src="scripts/gallery.js" defer></script>
 </head>
+
 <body>
-    <!-- page content unchanged -->
+
+    <!-- ================= HEADER ================= -->
+    <header>
+        <nav>
+            <div class="logo">Hope Mystica <span>Cakes</span></div>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="gallery-hero fade-in" aria-label="Gallery Hero Section">
+        <div class="hero-overlay">
+            <h1>Our Gallery</h1>
+            <p>Prepare to be amazed by our stunning handcrafted cakes</p>
+        </div>
+    </section>
+
+    <!-- ================= GALLERY ================= -->
+    <section class="gallery-content fade-in" aria-label="Cake Gallery">
+        <div class="container" id="gallery-container">
+
+            <!-- Loading state -->
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Loading our beautiful cakes...
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <p>Hope Mystica Cakes | Bugolobi Spring Valley Apartments, Kampala, Uganda</p>
+
+        <p>
+            Call us:
+            <a href="tel:+256701854289">0701 854 289</a> |
+            <a href="tel:+256775664822">0775 664 822</a>
+        </p>
+
+        <div class="social-icons">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+
+        <p>&copy; <span id="year"></span> Hope Mystica Cakes. All rights reserved.</p>
+    </footer>
+
+    <!-- ================= WHATSAPP BUTTON ================= -->
+    <a href="https://wa.me/256701854289?text=Hi%20Hope%20Mystica%20Cakes%2C%20I'd%20like%20to%20place%20an%20order!"
+       class="whatsapp-btn"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Order on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
 </body>
-</html>
+                </html>
