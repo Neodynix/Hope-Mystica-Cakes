@@ -117,3 +117,42 @@ window.deleteCake = async (id, path) => {
   await sb.from('cakes').delete().eq('id', id);
   loadCakes();
 };
+// ==================== MOBILE HAMBURGER MENU ====================
+
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+const mobileUserEmail = document.getElementById('mobile-user-email');
+
+// Toggle mobile menu
+if (hamburgerBtn && mobileMenu) {
+    hamburgerBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+    });
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!hamburgerBtn?.contains(e.target) && !mobileMenu?.contains(e.target)) {
+        mobileMenu?.classList.remove('active');
+    }
+});
+
+// Sync user email to mobile version too
+supabase.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+        // ... your existing code ...
+
+        if (mobileUserEmail) {
+            mobileUserEmail.textContent = session.user.email || 'Admin';
+        }
+    }
+});
+
+// Mobile logout (same as desktop)
+if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener('click', async () => {
+        if (!confirm('Log out now?')) return;
+        await supabase.auth.signOut();
+    });
+    }
