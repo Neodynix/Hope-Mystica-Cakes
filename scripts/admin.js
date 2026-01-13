@@ -85,6 +85,32 @@ loginForm.addEventListener('submit', async (e) => {
 logoutBtn.addEventListener('click', async () => {
   await sb.auth.signOut();
 });
+// ==================== INITIALIZE ====================
+window.addEventListener('DOMContentLoaded', () => {
+loadCakes();
+});
+
+// ==================== IMAGE PREVIEW ====================
+imageInput.addEventListener('change', e => {
+const file = e.target.files[0];
+if (!file) return;
+
+fileNameDisplay.textContent = file.name;    
+const reader = new FileReader();    
+reader.onload = ev => {    
+    previewImg.src = ev.target.result;    
+    previewContainer.classList.remove('hidden');    
+};    
+reader.readAsDataURL(file);
+
+});
+
+removeImgBtn.addEventListener('click', () => {
+imageInput.value = "";
+fileNameDisplay.textContent = "Choose an image...";
+previewImg.src = "";
+previewContainer.classList.add('hidden');
+});
 
 // ==================== LOAD CAKES ====================
 
