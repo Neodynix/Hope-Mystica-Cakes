@@ -42,14 +42,28 @@
     <!-- ADMIN DASHBOARD (hidden until logged in) -->
     <div id="admin-main" class="hidden">
         <header class="admin-header">
-            <nav class="container">
-                <div class="logo">Hope Mystica <span>Admin Panel</span></div>
-                <div class="header-actions">
-                    <span id="current-user-email"></span>
-                    <button id="logout-btn" class="btn-logout">Logout</button>
-                    <a href="index.html" class="view-site-btn">View Website</a>
-                </div>
-            </nav>
+    <nav class="container">
+        <div class="logo">Hope Mystica <span>Admin Panel</span></div>
+
+        <!-- Desktop / wide screen items -->
+        <div class="header-actions desktop-actions">
+            <span id="current-user-email"></span>
+            <button id="logout-btn" class="btn-logout">Logout</button>
+            <a href="index.html" class="view-site-btn">View Website</a>
+        </div>
+
+        <!-- Hamburger for mobile -->
+        <button class="hamburger" aria-label="Toggle menu" id="hamburger-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Mobile menu (hidden by default) -->
+        <div class="mobile-menu" id="mobile-menu">
+            <span id="mobile-user-email"></span>
+            <button id="mobile-logout-btn" class="btn-logout">Logout</button>
+            <a href="index.html" class="view-site-btn">View Website</a>
+        </div>
+    </nav>
         </header>
 
         <main class="admin-content">
