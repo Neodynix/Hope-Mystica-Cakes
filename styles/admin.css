@@ -66,6 +66,7 @@ body {
     padding: 8px 18px;
     border-radius: 30px;
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .view-site-btn:hover {
@@ -93,6 +94,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    text-align: center;
 }
 
 .btn-logout:hover {
