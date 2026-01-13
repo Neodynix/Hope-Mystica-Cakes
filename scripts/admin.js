@@ -2,7 +2,8 @@
 const SUPABASE_URL = 'https://xfinpgndgdpbeltiyvub.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmaW5wZ25kZ2RwYmVsdGl5dnViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NzYzNzksImV4cCI6MjA4MzQ1MjM3OX0.Q26zDDFutnFFMi4XpJEgJYgzc5VkKl65XrQKgiCBiPo'; 
 
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// FIXED: Use lowercase 'supabase' (from the CDN script)
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==================== DOM REFERENCES ====================
 const cakesList = document.getElementById('cakes-list');
@@ -15,31 +16,39 @@ const removeImgBtn = document.getElementById('remove-img-btn');
 
 // ==================== INITIALIZE ====================
 window.addEventListener('DOMContentLoaded', () => {
+    console.log("Admin page script loaded successfully"); // Debug: confirm script runs
     loadCakes();
 });
 
 // ==================== IMAGE PREVIEW LOGIC ====================
-imageInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        fileNameDisplay.textContent = file.name;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            previewImg.src = event.target.result;
-            previewContainer.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-    }
-});
+if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            fileNameDisplay.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                previewImg.src = event.target.result;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+} else {
+    console.error("File input element with id='image' not found");
+}
 
-removeImgBtn.addEventListener('click', () => {
-    imageInput.value = "";
-    fileNameDisplay.textContent = "Choose an image...";
-    previewContainer.classList.add('hidden');
-});
+if (removeImgBtn) {
+    removeImgBtn.addEventListener('click', () => {
+        imageInput.value = "";
+        fileNameDisplay.textContent = "Choose an image...";
+        previewContainer.classList.add('hidden');
+    });
+}
 
 // ==================== LOAD CAKES ====================
 async function loadCakes() {
+    if (!cakesList) return;
     cakesList.innerHTML = '<p>Updating gallery...</p>';
     try {
         const { data: cakes, error } = await supabase
@@ -70,51 +79,61 @@ async function loadCakes() {
         `).join('');
     } catch (err) {
         cakesList.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+        console.error("Load cakes error:", err);
     }
 }
 
 // ==================== ADD CAKE ====================
-addCakeForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const submitBtn = document.getElementById('submit-btn');
-    const message = document.getElementById('message');
-    const file = imageInput.files[0];
+if (addCakeForm) {
+    addCakeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submit-btn');
+        const message = document.getElementById('message');
+        const file = imageInput.files[0];
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Uploading...';
+        if (!file) {
+            message.textContent = 'Please select an image first';
+            message.style.color = 'red';
+            return;
+        }
 
-    try {
-        const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
-        
-        // 1. Storage Upload
-        const { error: upError } = await supabase.storage.from('cakes').upload(fileName, file);
-        if (upError) throw upError;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
 
-        // 2. Database Insert
-        const { error: insError } = await supabase.from('cakes').insert([{
-            title: document.getElementById('title').value,
-            category: document.getElementById('category').value,
-            weight: document.getElementById('weight').value,
-            price: document.getElementById('price').value || null,
-            description: document.getElementById('description').value,
-            image_path: fileName
-        }]);
-        if (insError) throw insError;
+        try {
+            const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
+            
+            // 1. Storage Upload
+            const { error: upError } = await supabase.storage.from('cakes').upload(fileName, file);
+            if (upError) throw upError;
 
-        message.textContent = 'Cake added successfully!';
-        message.style.color = 'green';
-        addCakeForm.reset();
-        previewContainer.classList.add('hidden');
-        fileNameDisplay.textContent = "Choose an image...";
-        loadCakes();
-    } catch (err) {
-        message.textContent = `Error: ${err.message}`;
-        message.style.color = 'red';
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Upload to Gallery';
-    }
-});
+            // 2. Database Insert
+            const { error: insError } = await supabase.from('cakes').insert([{
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                weight: document.getElementById('weight').value,
+                price: document.getElementById('price').value || null,
+                description: document.getElementById('description').value,
+                image_path: fileName
+            }]);
+            if (insError) throw insError;
+
+            message.textContent = 'Cake added successfully!';
+            message.style.color = 'green';
+            addCakeForm.reset();
+            previewContainer.classList.add('hidden');
+            fileNameDisplay.textContent = "Choose an image...";
+            loadCakes();
+        } catch (err) {
+            message.textContent = `Error: ${err.message}`;
+            message.style.color = 'red';
+            console.error("Upload error:", err);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload to Gallery';
+        }
+    });
+}
 
 // ==================== DELETE CAKE ====================
 window.deleteCake = async (id, path) => {
@@ -124,6 +143,7 @@ window.deleteCake = async (id, path) => {
         await supabase.from('cakes').delete().eq('id', id);
         loadCakes();
     } catch (err) {
-        alert(err.message);
+        alert('Delete failed: ' + err.message);
+        console.error("Delete error:", err);
     }
 };
