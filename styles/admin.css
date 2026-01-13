@@ -1,25 +1,39 @@
 :root {
     --primary-color: #ff69b4;
     --secondary-color: #00C4B4;
+    --dark-color: #333;
     --light-bg: #f9f9f9;
+    --danger-color: #e74c3c;
+    --success-color: #27ae60;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background: var(--light-bg);
+    background-color: var(--light-bg);
     font-family: 'Poppins', sans-serif;
-    margin: 0;
+    color: var(--dark-color);
+    line-height: 1.6;
 }
 
 .container {
     max-width: 1100px;
-    margin: auto;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
+/* ──────────────── HEADER ──────────────── */
 .admin-header {
     background: white;
     padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .admin-header nav {
@@ -30,56 +44,255 @@ body {
 
 .logo {
     font-family: 'Dancing Script', cursive;
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: var(--primary-color);
 }
 
 .logo span {
-    font-size: .8rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
     margin-left: 10px;
+    letter-spacing: 1px;
 }
 
 .view-site-btn {
-    border: 2px solid var(--secondary-color);
-    background: none;
-    padding: 6px 15px;
-    border-radius: 20px;
+    text-decoration: none;
     color: var(--secondary-color);
+    font-weight: 600;
+    border: 2px solid var(--secondary-color);
+    padding: 8px 18px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.view-site-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+#current-user-email {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.btn-logout {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background: #c0392b;
+}
+
+/* ──────────────── LOGIN SCREEN ──────────────── */
+.login-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #ff1493 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.login-box {
+    background: white;
+    padding: 40px 35px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.login-box h2 {
+    margin: 0 0 10px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 3rem;
+    color: var(--dark-color);
+}
+
+.login-box p {
+    margin: 0 0 32px;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.form-group {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(0,196,180,0.15);
+}
+
+.btn-login {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 12px;
+    transition: all 0.25s;
+}
+
+.btn-login:hover {
+    background: #ff1493;
+    transform: translateY(-2px);
+}
+
+.btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 16px;
+    min-height: 1.4em;
+    font-size: 0.95rem;
+}
+
+/* ──────────────── MAIN CONTENT ──────────────── */
+.admin-content {
+    padding: 40px 0;
+}
+
+.upload-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+h2 {
+    margin-bottom: 24px;
+    color: var(--dark-color);
+    font-weight: 600;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
 }
 
-.full-width { grid-column: 1/-1; }
+.full-width {
+    grid-column: 1 / -1;
+}
 
-#add-cake-form {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(0,196,180,0.1);
+}
+
+.file-upload-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+#image {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
 }
 
 .file-custom-btn {
     display: flex;
-    gap: 10px;
+    align-items: center;
     justify-content: center;
-    padding: 15px;
+    gap: 10px;
+    padding: 16px;
+    background: #f0fdfc;
     border: 2px dashed var(--secondary-color);
+    border-radius: 10px;
+    color: var(--secondary-color);
     cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
-#image {
-    display: none;
+.file-custom-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+    border-color: transparent;
 }
 
 #image-preview-container {
-    width: 180px;
-    height: 140px;
-    margin-top: 15px;
     position: relative;
+    margin-top: 16px;
+    width: 200px;
+    height: 160px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 #image-preview {
@@ -90,58 +303,108 @@ body {
 
 #remove-img-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: red;
+    top: 8px;
+    right: 8px;
+    background: var(--danger-color);
     color: white;
     border: none;
     border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .btn-submit {
+    margin-top: 24px;
     background: var(--secondary-color);
     color: white;
-    padding: 15px;
     border: none;
-    width: 100%;
+    padding: 16px;
     border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
+    width: 100%;
+    transition: all 0.25s;
 }
 
+.btn-submit:hover {
+    background: #00a69a;
+    transform: translateY(-2px);
+}
+
+.section-divider {
+    border: none;
+    height: 1px;
+    background: #eee;
+    margin: 50px 0;
+}
+
+/* ──────────────── CAKE GRID ──────────────── */
 .admin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
 }
 
 .cake-card {
     background: white;
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.cake-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
 .cake-card img {
     width: 100%;
-    height: 200px;
+    height: 220px;
     object-fit: cover;
 }
 
-.hidden { display: none; }
-
-/* LOGIN */
-.login-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.cake-info {
+    padding: 18px;
 }
 
-.login-box {
-    background: white;
-    padding: 30px;
-    width: 320px;
-    border-radius: 15px;
-    text-align: center;
+.cake-info h3 {
+    margin: 0 0 10px;
+    font-size: 1.25rem;
+    color: var(--dark-color);
+}
+
+.cake-info p {
+    margin: 6px 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.delete-btn {
+    background: #fff5f5;
+    color: var(--danger-color);
+    border: 1px solid #ffcaca;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background: #ffebeb;
+}
+
+/* ──────────────── UTILITIES ──────────────── */
+.hidden {
+    display: none !important;
     }
