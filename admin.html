@@ -11,89 +11,104 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
-    
     <script src="scripts/admin.js" defer></script>
 </head>
 <body>
 
-    <header class="admin-header">
-        <nav class="container">
-            <div class="logo">Hope Mystica <span>Admin Panel</span></div>
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay" class="login-overlay hidden">
+    <div class="login-box">
+        <h2>Admin Login</h2>
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Password">
+        <button id="login-btn">Login</button>
+        <p id="login-message"></p>
+    </div>
+</div>
+
+<header class="admin-header">
+    <nav class="container">
+        <div class="logo">Hope Mystica <span>Admin Panel</span></div>
+        <div>
             <a href="index.html" class="view-site-btn">View Website</a>
-        </nav>
-    </header>
-
-    <main class="admin-content">
-        <div class="container">
-            
-            <section class="upload-section">
-                <h2><i class="fas fa-plus-circle"></i> Add New Cake</h2>
-                <form id="add-cake-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Title *</label>
-                            <input type="text" id="title" placeholder="e.g., Chocolate Truffle" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Category *</label>
-                            <select id="category" required>
-                                <option value="">Select category</option>
-                                <option value="Wedding & Kwanjula Cakes">Wedding & Kwanjula Cakes</option>
-                                <option value="Birthday & Kids Cakes">Birthday & Kids Cakes</option>
-                                <option value="Traditional & Special Flavours">Traditional & Special Flavours</option>
-                                <option value="Luxury & Custom Cakes">Luxury & Custom Cakes</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Weight (e.g., 3 kgs)</label>
-                            <input type="text" id="weight" placeholder="e.g., 2 kgs">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Price (UGX)</label>
-                            <input type="number" id="price" placeholder="e.g., 150000">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label>Description</label>
-                            <textarea id="description" rows="3" placeholder="Short description of the cake..."></textarea>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label>Cake Image *</label>
-                            <div class="file-upload-wrapper">
-                                <input type="file" id="image" accept="image/*" required>
-                                <label for="image" class="file-custom-btn">
-                                    <i class="fas fa-cloud-upload-alt"></i> 
-                                    <span id="file-name-display">Choose an image...</span>
-                                </label>
-                            </div>
-                            
-                            <div id="image-preview-container" class="hidden">
-                                <img id="image-preview" src="" alt="Selected Cake Preview">
-                                <button type="button" id="remove-img-btn" title="Remove image">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-submit" id="submit-btn">Upload to Gallery</button>
-                    <p id="message"></p>
-                </form>
-            </section>
-
-            <hr class="section-divider">
-
-            <section class="list-section">
-                <h2><i class="fas fa-images"></i> Current Gallery</h2>
-                <div id="cakes-list" class="admin-grid">
-                    </div>
-            </section>
+            <button id="logout-btn" class="view-site-btn">Logout</button>
         </div>
-    </main>
+    </nav>
+</header>
+
+<main class="admin-content">
+    <div class="container">
+
+        <section class="upload-section">
+            <h2><i class="fas fa-plus-circle"></i> Add New Cake</h2>
+
+            <form id="add-cake-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Title *</label>
+                        <input type="text" id="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="category" required>
+                            <option value="">Select category</option>
+                            <option>Wedding & Kwanjula Cakes</option>
+                            <option>Birthday & Kids Cakes</option>
+                            <option>Traditional & Special Flavours</option>
+                            <option>Luxury & Custom Cakes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Weight</label>
+                        <input type="text" id="weight">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price (UGX)</label>
+                        <input type="number" id="price">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea id="description"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Cake Image *</label>
+
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="image" accept="image/*" required>
+                            <label for="image" class="file-custom-btn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span id="file-name-display">Choose an image...</span>
+                            </label>
+                        </div>
+
+                        <div id="image-preview-container" class="hidden">
+                            <img id="image-preview">
+                            <button type="button" id="remove-img-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="submit-btn" class="btn-submit">Upload to Gallery</button>
+                <p id="message"></p>
+            </form>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="list-section">
+            <h2><i class="fas fa-images"></i> Current Gallery</h2>
+            <div id="cakes-list" class="admin-grid"></div>
+        </section>
+
+    </div>
+</main>
 
 </body>
-                                    </html>
+            </html>
